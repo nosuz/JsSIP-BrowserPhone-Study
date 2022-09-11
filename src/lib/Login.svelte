@@ -34,6 +34,7 @@
     ua.on("disconnected", function (e) {
       console.log("disconnected");
       ua.stop();
+      password = "";
       loginFailed = true;
     });
 
@@ -48,6 +49,7 @@
     });
     ua.on("registrationFailed", function (e) {
       console.log("registrationFailed");
+      password = "";
       loginFailed = true;
     });
 
