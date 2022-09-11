@@ -1,17 +1,11 @@
 <script>
   import { onDestroy } from "svelte";
-  import { phoneAgentStore, sipStore } from "./PhoneAgentStore";
+  import { phoneAgent, sipStore } from "./PhoneAgentStore";
 
   import JsSIP from "jssip";
   // JsSIP.debug.enable("JsSIP:*");
 
-  let phoneAgent;
   let sipUri;
-
-  phoneAgentStore.subscribe((value) => {
-    console.log(value);
-    phoneAgent = value;
-  });
 
   sipStore.subscribe((value) => {
     console.log(value);
@@ -34,12 +28,12 @@
 
   const timer = setInterval(() => {
     console.log("Keep-Alive");
-    // phoneAgent().sendOptions(
+    // $phoneAgent.sendOptions(
     //   sip: sipUri,
     //   null,
     //   optionsOptions
     // );
-    phoneAgent.sendOptions(sipUri);
+    $phoneAgent.sendOptions(sipUri);
   }, 30000);
   onDestroy(() => clearInterval(timer));
 
@@ -60,13 +54,13 @@
         answerCall();
       } else {
         if (!onSession && dialNumber.length > 0) {
-          phoneAgent.call(dialNumber, callOptions);
+          $phoneAgent.call(dialNumber, callOptions);
         }
       }
     }
   });
 
-  phoneAgent.on("newRTCSession", function (data) {
+  $phoneAgent.on("newRTCSession", function (data) {
     console.log("New Settion");
     console.log(data);
 

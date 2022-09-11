@@ -1,18 +1,12 @@
 <script>
-  import { phoneAgentStore } from "./lib/PhoneAgentStore";
+  import { phoneAgent } from "./lib/PhoneAgentStore";
 
   import Login from "./lib/Login.svelte";
   import Phone from "./lib/Phone.svelte";
-
-  let phoneAgent;
-
-  phoneAgentStore.subscribe((value) => {
-    phoneAgent = value;
-  });
 </script>
 
 <div class="container">
-  {#if phoneAgent}
+  {#if $phoneAgent}
     <Phone />
   {:else}
     <Login />

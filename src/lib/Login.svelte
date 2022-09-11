@@ -1,5 +1,5 @@
 <script>
-  import { phoneAgentStore, sipStore } from "./PhoneAgentStore";
+  import { phoneAgent, sipStore } from "./PhoneAgentStore";
 
   import config from "../config.json";
   // Must be distributed from Secure HTTP
@@ -41,7 +41,7 @@
     ua.on("registered", function (e) {
       console.log("registered");
       // move to Phone
-      phoneAgentStore.set(ua);
+      phoneAgent.set(ua);
       console.log(ua);
     });
     ua.on("unregistered", function (e) {
