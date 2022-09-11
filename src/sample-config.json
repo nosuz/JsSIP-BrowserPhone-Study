@@ -1,0 +1,4 @@
+{
+    "web_socket": "wss://example.com/ws",
+    "sip_server": "example.com"
+}
