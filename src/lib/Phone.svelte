@@ -1,4 +1,5 @@
 <script>
+  import { onDestroy } from "svelte";
   import { phoneAgentStore, sipStore } from "./PhoneAgentStore";
 
   import JsSIP from "jssip";
@@ -40,7 +41,7 @@
     // );
     phoneAgent.sendOptions(sipUri);
   }, 30000);
-  //   onCleanup(() => clearInterval(timer));
+  onDestroy(() => clearInterval(timer));
 
   document.body.addEventListener("keydown", (event) => {
     console.log(event.key);
