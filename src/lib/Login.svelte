@@ -32,8 +32,9 @@
       console.log("connected");
     });
     ua.on("disconnected", function (e) {
-      console.log("disconnected");
+      console.error("disconnected");
       ua.stop();
+      phoneAgent.set(null);
       password = "";
       loginFailed = true;
     });
