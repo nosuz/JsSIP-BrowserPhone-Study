@@ -76,11 +76,11 @@
     } else if (event.key == "Enter") {
       if (phoneSate == PhoneState.Idele) {
         makeCall();
+      } else if (phoneSate == PhoneState.Incoming) {
+        // make a call or answer ringing.
+        dialNumber = "";
+        answerCall();
       }
-    } else if (phoneSate == PhoneState.Incoming) {
-      // make a call or answer ringing.
-      dialNumber = "";
-      answerCall();
     }
   });
 
