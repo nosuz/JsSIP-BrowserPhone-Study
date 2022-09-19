@@ -20,11 +20,34 @@
   };
 
   let dialNumber = "";
-  let onSession = false;
-  let incoming = false;
+
+  const PhoneState = {
+    Idele: 0,
+    Calling: 1,
+    Incoming: 2,
+    Online: 3,
+  };
+  let phoneSate = PhoneState.Idele;
 
   let session;
   let audio;
+
+  // make function reactive
+  $: phoneIsIdle = () => {
+    return phoneSate == PhoneState.Idele;
+  };
+
+  $: phoneIsCalling = () => {
+    return phoneSate == PhoneState.Calling;
+  };
+
+  $: phoneIsIncoming = () => {
+    return phoneSate == PhoneState.Incoming;
+  };
+
+  $: phoneIsOnline = () => {
+    return phoneSate == PhoneState.Online;
+  };
 
   const timer = setInterval(() => {
     console.log("Keep-Alive");
@@ -48,15 +71,13 @@
         dialNumber = dialNumber.slice(0, -1);
       }
     } else if (event.key == "Enter") {
-      // make a call or answer ringing.
-      if (incoming) {
-        dialNumber = "";
-        answerCall();
-      } else {
-        if (!onSession && dialNumber.length > 0) {
-          $phoneAgent.call(dialNumber, callOptions);
-        }
+      if (phoneSate == PhoneState.Idele) {
+        makeCall();
       }
+    } else if (phoneSate == PhoneState.Incoming) {
+      // make a call or answer ringing.
+      dialNumber = "";
+      answerCall();
     }
   });
 
@@ -68,14 +89,13 @@
     var header = new JsSIP.NameAddrHeader(data.request.from.uri);
     console.log("From: " + display_name + " " + header.toString());
 
-    if (onSession) {
+    if (phoneSate != PhoneState.Idele) {
       console.log("tell busy");
       data.session.terminate();
       return;
     }
 
     session = data.session;
-    onSession = true;
     session.on("connecting", function (e) {
       console.log("connecting");
       console.log(e);
@@ -91,7 +111,7 @@
     session.on("accepted", function (e) {
       console.log("accepted");
       // console.log(session);
-      incoming = false;
+      phoneSate = PhoneState.Online;
     });
 
     session.on("confirmed", function () {
@@ -103,8 +123,7 @@
       //the call has ended
       console.log("ended");
       session = null;
-      onSession = false;
-      incoming = false;
+      phoneSate = PhoneState.Idele;
       dialNumber = "";
     });
     session.on("failed", function (e) {
@@ -116,15 +135,15 @@
         audio.pause();
       }
       audio = null;
-      onSession = false;
-      incoming = false;
+      phoneSate = PhoneState.Idele;
       dialNumber = "";
     });
 
     if (session.direction === "outgoing") {
+      phoneSate = PhoneState.Calling;
       add_sound_stream();
     } else if (session.direction === "incoming") {
-      incoming = true;
+      phoneSate = PhoneState.Incoming;
       audio = document.createElement("audio");
       // https://otologic.jp/free/se/phone02.html
       audio.src = "./ring2.mp3";
@@ -143,6 +162,10 @@
       audio.srcObject = e.stream;
       audio.play();
     });
+  }
+
+  function makeCall() {
+    if (dialNumber.length > 0) $phoneAgent.call(dialNumber, callOptions);
   }
 
   function hangupCall() {
@@ -202,13 +225,13 @@
         </tbody>
       </table>
 
-      {#if dialNumber != ""}
+      {#if phoneIsIdle() && dialNumber != ""}
         <div class="row mb-2">
-          <button type="button" class="btn btn-success" on:click={answerCall}>
+          <button type="button" class="btn btn-success" on:click={makeCall}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
+              width="32"
+              height="32"
               fill="currentColor"
               class="bi bi-telephone-outbound-fill"
               viewBox="0 0 16 16"
@@ -220,18 +243,40 @@
             </svg>
           </button>
         </div>
-      {/if}
-      {#if onSession}
-        <div class="row mb-2">
-          <button type="button" class="btn btn-danger" on:click={hangupCall}>
-            Hangup
-          </button>
-        </div>
-      {/if}
-      {#if incoming}
+      {:else if phoneIsIncoming()}
         <div class="row mb-2">
           <button type="button" class="btn btn-success" on:click={answerCall}>
-            Accept
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="currentColor"
+              class="bi bi-telephone-inbound-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zM15.854.146a.5.5 0 0 1 0 .708L11.707 5H14.5a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 1 0v2.793L15.146.146a.5.5 0 0 1 .708 0z"
+              />
+            </svg>
+          </button>
+        </div>
+      {:else if phoneIsOnline() || phoneIsCalling()}
+        <div class="row mb-2">
+          <button type="button" class="btn btn-danger" on:click={hangupCall}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="currentColor"
+              class="bi bi-telephone-x-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511zm9.261 1.135a.5.5 0 0 1 .708 0L13 2.793l1.146-1.147a.5.5 0 0 1 .708.708L13.707 3.5l1.147 1.146a.5.5 0 0 1-.708.708L13 4.207l-1.146 1.147a.5.5 0 0 1-.708-.708L12.293 3.5l-1.147-1.146a.5.5 0 0 1 0-.708z"
+              />
+            </svg>
           </button>
         </div>
       {/if}
