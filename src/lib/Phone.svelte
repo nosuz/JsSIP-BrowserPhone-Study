@@ -141,20 +141,25 @@
 
     if (session.direction === "outgoing") {
       phoneSate = PhoneState.Calling;
-      add_sound_stream();
+      playCallingSound();
+      addSoundStream();
     } else if (session.direction === "incoming") {
       phoneSate = PhoneState.Incoming;
-      audio = document.createElement("audio");
-      // https://otologic.jp/free/se/phone02.html
-      audio.src = "./ring2.mp3";
-      audio.loop = true;
-      audio.play();
+      playCallingSound();
     }
   });
 
-  function add_sound_stream() {
+  function playCallingSound() {
+    audio = document.createElement("audio");
+    // https://otologic.jp/free/se/phone02.html
+    audio.src = "./ring1.mp3";
+    audio.loop = true;
+    audio.play();
+  }
+
+  function addSoundStream() {
     session.connection.addEventListener("addstream", function (e) {
-      console.log("connection addtream");
+      console.log("connection add stream");
       if (audio) {
         audio.pause();
       }
@@ -179,7 +184,7 @@
     if (session) {
       console.log("Answer call");
       session.answer(callOptions);
-      add_sound_stream();
+      addSoundStream();
     }
   }
 
