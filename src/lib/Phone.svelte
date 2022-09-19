@@ -160,7 +160,7 @@
     }
   }
 
-  function clieckDialPad(number) {
+  function clickedDialPad(number) {
     dialNumber = dialNumber + number;
     if (session) {
       session.sendDTMF(number);
@@ -180,24 +180,24 @@
 
         <tbody>
           <tr>
-            <td on:click={() => clieckDialPad("1")}>1</td>
-            <td on:click={() => clieckDialPad("2")}>2</td>
-            <td on:click={() => clieckDialPad("3")}>3</td>
+            <td on:click={() => clickedDialPad("1")}>1</td>
+            <td on:click={() => clickedDialPad("2")}>2</td>
+            <td on:click={() => clickedDialPad("3")}>3</td>
           </tr>
           <tr>
-            <td on:click={() => clieckDialPad("4")}>4</td>
-            <td on:click={() => clieckDialPad("5")}>5</td>
-            <td on:click={() => clieckDialPad("6")}>6</td>
+            <td on:click={() => clickedDialPad("4")}>4</td>
+            <td on:click={() => clickedDialPad("5")}>5</td>
+            <td on:click={() => clickedDialPad("6")}>6</td>
           </tr>
           <tr>
-            <td on:click={() => clieckDialPad("7")}>7</td>
-            <td on:click={() => clieckDialPad("8")}>8</td>
-            <td on:click={() => clieckDialPad("9")}>9</td>
+            <td on:click={() => clickedDialPad("7")}>7</td>
+            <td on:click={() => clickedDialPad("8")}>8</td>
+            <td on:click={() => clickedDialPad("9")}>9</td>
           </tr>
           <tr>
-            <td on:click={() => clieckDialPad("*")}>*</td>
-            <td on:click={() => clieckDialPad("0")}>0</td>
-            <td on:click={() => clieckDialPad("#")}>#</td>
+            <td on:click={() => clickedDialPad("*")}>*</td>
+            <td on:click={() => clickedDialPad("0")}>0</td>
+            <td on:click={() => clickedDialPad("#")}>#</td>
           </tr>
         </tbody>
       </table>
