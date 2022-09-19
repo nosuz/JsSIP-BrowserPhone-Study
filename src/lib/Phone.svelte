@@ -20,6 +20,9 @@
   };
 
   let dialNumber = "";
+  $: callNumber = () => {
+    return dialNumber.replace(/[^\d\*#]/g, "");
+  };
 
   const PhoneState = {
     Idele: 0,
@@ -170,7 +173,7 @@
   }
 
   function makeCall() {
-    if (dialNumber.length > 0) $phoneAgent.call(dialNumber, callOptions);
+    if (callNumber().length > 0) $phoneAgent.call(callNumber(), callOptions);
   }
 
   function hangupCall() {
@@ -230,7 +233,7 @@
         </tbody>
       </table>
 
-      {#if phoneIsIdle() && dialNumber != ""}
+      {#if phoneIsIdle() && callNumber() != ""}
         <div class="row mb-2">
           <button type="button" class="btn btn-success" on:click={makeCall}>
             <svg
