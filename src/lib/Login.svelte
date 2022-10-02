@@ -81,6 +81,9 @@
           console.log(response.data);
           if (response.data.auth) {
             startPhoneAgent();
+          } else {
+            password = "";
+            loginFailed = true;
           }
         });
     } else {
