@@ -18,6 +18,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "bootstrap": "^5.2.1",
-    "jssip": "^3.9.1"
+    "jssip": "^3.9.1",
+    "sha256-uint8array": "^0.10.3"
   }
 }
