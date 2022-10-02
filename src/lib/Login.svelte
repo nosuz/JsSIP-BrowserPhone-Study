@@ -1,6 +1,7 @@
 <script>
   import { phoneAgent, sipStore, authToken } from "./PhoneAgentStore";
   import axios from "axios";
+  import { createHash } from "sha256-uint8array";
 
   import config from "../config.json";
   // Must be distributed from Secure HTTP
@@ -65,12 +66,23 @@
         password: password,
       });
 
-      axios.post("/auth", $authToken).then((response) => {
-        console.log(response.data);
-        if (response.data.auth) {
-          startPhoneAgent();
-        }
-      });
+      const time = Math.round(Date.now() / 1000);
+      console.log(time);
+      const digest = createHash()
+        .update(user_id + password + time)
+        .digest("hex");
+      axios
+        .post("/auth", {
+          time: time,
+          username: user_id,
+          digest: digest,
+        })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data.auth) {
+            startPhoneAgent();
+          }
+        });
     } else {
       startPhoneAgent();
     }

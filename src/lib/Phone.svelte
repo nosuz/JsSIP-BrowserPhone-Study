@@ -2,6 +2,7 @@
   import { onDestroy } from "svelte";
   import { phoneAgent, sipStore, authToken } from "./PhoneAgentStore";
   import axios from "axios";
+  import { createHash } from "sha256-uint8array";
 
   import config from "../config.json";
   import JsSIP from "jssip";
@@ -69,10 +70,21 @@
     // Reauthorize to keep open WebSocket.
     const auth_timer = setInterval(() => {
       console.log("Reauth");
-      axios.post("/auth", $authToken).then((response) => {
-        console.log(response.data);
-      });
-    }, 60000 * 20); // every 20 min.
+      const time = Math.round(Date.now() / 1000);
+      console.log(time);
+      const digest = createHash()
+        .update($authToken.username + $authToken.password + time)
+        .digest("hex");
+      axios
+        .post("/auth", {
+          time: time,
+          username: $authToken.username,
+          digest: digest,
+        })
+        .then((response) => {
+          console.log(response.data);
+        });
+    }, 1000 * 60 * 20); // every 20 min.
     onDestroy(() => clearInterval(auth_timer));
   }
 
