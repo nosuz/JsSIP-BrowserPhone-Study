@@ -1,5 +1,6 @@
 <script>
-  import { phoneAgent, sipStore } from "./PhoneAgentStore";
+  import { phoneAgent, sipStore, authToken } from "./PhoneAgentStore";
+  import axios from "axios";
 
   import config from "../config.json";
   // Must be distributed from Secure HTTP
@@ -10,11 +11,7 @@
   let password = "";
   let loginFailed = false;
 
-  function onSubmit() {
-    console.log("Login");
-    console.log(user_id, password);
-    loginFailed = false;
-
+  function startPhoneAgent() {
     let sipUri = "sip:" + user_id + "@" + config.sip_server;
     sipStore.set(sipUri);
 
@@ -55,6 +52,28 @@
     });
 
     ua.start();
+  }
+
+  function onSubmit() {
+    console.log("Login");
+    console.log(user_id, password);
+    loginFailed = false;
+
+    if (config.firewall) {
+      authToken.set({
+        username: user_id,
+        password: password,
+      });
+
+      axios.post("/auth", $authToken).then((response) => {
+        console.log(response.data);
+        if (response.data.auth) {
+          startPhoneAgent();
+        }
+      });
+    } else {
+      startPhoneAgent();
+    }
   }
 </script>
 

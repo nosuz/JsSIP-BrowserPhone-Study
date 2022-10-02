@@ -1,7 +1,9 @@
 <script>
   import { onDestroy } from "svelte";
-  import { phoneAgent, sipStore } from "./PhoneAgentStore";
+  import { phoneAgent, sipStore, authToken } from "./PhoneAgentStore";
+  import axios from "axios";
 
+  import config from "../config.json";
   import JsSIP from "jssip";
   // JsSIP.debug.enable("JsSIP:*");
 
@@ -62,6 +64,17 @@
     $phoneAgent.sendOptions(sipUri);
   }, 30000);
   onDestroy(() => clearInterval(timer));
+
+  if (config.firewall) {
+    // Reauthorize to keep open WebSocket.
+    const auth_timer = setInterval(() => {
+      console.log("Reauth");
+      axios.post("/auth", $authToken).then((response) => {
+        console.log(response.data);
+      });
+    }, 60000 * 20); // every 20 min.
+    onDestroy(() => clearInterval(auth_timer));
+  }
 
   document.body.addEventListener("keydown", (event) => {
     console.log(event.key);

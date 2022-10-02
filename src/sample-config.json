@@ -1,4 +1,5 @@
 {
     "web_socket": "wss://example.com/ws",
-    "sip_server": "example.com"
+    "sip_server": "example.com",
+    "firewall": false
 }
