@@ -27,3 +27,4 @@ dist-ssr
 .vscode/
 *.tgz
 config.json
+vite-vars.json

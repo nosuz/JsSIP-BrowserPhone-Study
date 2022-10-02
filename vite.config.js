@@ -3,6 +3,8 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import viteCompression from 'vite-plugin-compression';
 import purgecss from '@fullhuman/postcss-purgecss'
 
+import vars from "./vite-vars.json";
+
 
 import fs from 'fs'
 
@@ -33,14 +35,12 @@ export default defineConfig(({ command, mode }) => {
           key: fs.readFileSync('./cert/server.key'),
           cert: fs.readFileSync('./cert/server.crt'),
         },
-        // proxy: {
-        //   '/ws':{
-        //     target: 'wss://test.mosquitto.org:8081/',
-        //     secure: false,
-        //     ws: true,
-        //     rewrite: (path) => path.replace(/^\/ws/, '')
-        //   },
-        // },
+        proxy: {
+          '/auth':{
+            target: vars.http_server,
+            secure: false,
+          },
+        },
         }
     }
   }
