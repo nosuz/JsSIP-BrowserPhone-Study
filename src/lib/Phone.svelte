@@ -88,8 +88,8 @@
     console.log("New Settion");
     console.log(data);
 
-    var display_name = data.request.from.display_name || "Anonymous";
-    var header = new JsSIP.NameAddrHeader(data.request.from.uri);
+    let display_name = data.request.from.display_name || "Anonymous";
+    let header = new JsSIP.NameAddrHeader(data.request.from.uri);
     console.log("From: " + display_name + " " + header.toString());
 
     if (phoneSate != PhoneState.Idele) {

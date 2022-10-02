@@ -15,11 +15,11 @@
     console.log(user_id, password);
     loginFailed = false;
 
-    var sipUri = "sip:" + user_id + "@" + config.sip_server;
+    let sipUri = "sip:" + user_id + "@" + config.sip_server;
     sipStore.set(sipUri);
 
-    var socket = new JsSIP.WebSocketInterface(config.web_socket);
-    var configuration = {
+    let socket = new JsSIP.WebSocketInterface(config.web_socket);
+    let configuration = {
       uri: sipUri,
       // authorization_user: user_id,
       password: password,
@@ -27,7 +27,7 @@
       sockets: [socket],
     };
 
-    var ua = new JsSIP.UA(configuration);
+    let ua = new JsSIP.UA(configuration);
     ua.on("connected", function (e) {
       console.log("connected");
     });
