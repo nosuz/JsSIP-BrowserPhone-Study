@@ -11,6 +11,7 @@
   let user_id = "";
   let password = "";
   let loginFailed = false;
+  let authInProgress = false;
 
   function startPhoneAgent() {
     let sipUri = "sip:" + user_id + "@" + config.sip_server;
@@ -71,6 +72,8 @@
       const digest = createHash()
         .update(user_id + password + time)
         .digest("hex");
+
+      authInProgress = true;
       axios
         .post("/auth", {
           time: time,
@@ -85,7 +88,8 @@
             password = "";
             loginFailed = true;
           }
-        });
+        })
+        .finally(() => (authInProgress = false));
     } else {
       startPhoneAgent();
     }
@@ -138,7 +142,13 @@
     </div>
 
     <div class="row mb-3">
-      <button type="submit" class="btn btn-primary col-sm-2"> Login </button>
+      <button
+        type="submit"
+        class="btn btn-primary col-sm-2"
+        disabled={authInProgress}
+      >
+        Login
+      </button>
     </div>
   </form>
 </div>
