@@ -90,21 +90,29 @@
 
   document.body.addEventListener("keydown", (event) => {
     console.log(event.key);
-    if (event.key.match(/^[\d\-\*#]$/)) {
-      dialNumber = dialNumber + event.key;
-    } else if (event.key == "Delete") {
-      dialNumber = "";
-    } else if (event.key == "Backspace") {
-      if (dialNumber.length > 0) {
-        dialNumber = dialNumber.slice(0, -1);
-      }
-    } else if (event.key == "Enter") {
-      if (phoneSate == PhoneState.Idele) {
+    if (phoneSate == PhoneState.Idele) {
+      if (event.key.match(/^[\d\-\*#]$/)) {
+        dialNumber = dialNumber + event.key;
+      } else if (event.key == "Delete") {
+        dialNumber = "";
+      } else if (event.key == "Backspace") {
+        if (dialNumber.length > 0) {
+          dialNumber = dialNumber.slice(0, -1);
+        }
+      } else if (event.key == "Enter") {
         makeCall();
-      } else if (phoneSate == PhoneState.Incoming) {
+      }
+    } else if (phoneSate == PhoneState.Incoming) {
+      if (event.key == "Enter") {
         // make a call or answer ringing.
         dialNumber = "";
         answerCall();
+      }
+    } else if (phoneSate == PhoneState.Online) {
+      if (event.key.match(/^[\d\*#]$/)) {
+        clickedDialPad(event.key);
+      } else if (event.key == "Delete") {
+        hangupCall();
       }
     }
   });
