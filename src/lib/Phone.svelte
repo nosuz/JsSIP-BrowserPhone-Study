@@ -93,6 +93,14 @@
     if (phoneSate == PhoneState.Idele) {
       if (event.key.match(/^[\d\-\*#]$/)) {
         dialNumber = dialNumber + event.key;
+      } else if (event.ctrlKey && event.key == "v") {
+        // paste from clipboad
+        navigator.clipboard
+          .readText()
+          .then(
+            (text) =>
+              (dialNumber = dialNumber + text.replace(/[^\d\-\*#\(\)]/g, ""))
+          );
       } else if (event.key == "Delete") {
         dialNumber = "";
       } else if (event.key == "Backspace") {
