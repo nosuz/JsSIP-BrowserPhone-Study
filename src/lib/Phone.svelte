@@ -115,12 +115,12 @@
         // make a call or answer ringing.
         dialNumber = "";
         answerCall();
+      } else if (event.key == "Delete") {
+        hangupCall();
       }
     } else if (phoneSate == PhoneState.Online) {
       if (event.key.match(/^[\d\*#]$/)) {
         clickedDialPad(event.key);
-      } else if (event.key == "Delete") {
-        hangupCall();
       }
     }
   });
